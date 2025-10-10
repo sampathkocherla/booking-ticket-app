@@ -1,87 +1,114 @@
  import React, { useState, useEffect } from 'react'
-import { dummyBookingData } from '../assets/assets'
 import Loading from '../components/Loading'
 import BlurCircle from '../components/BlurCircle'
 import dateFormat from '../Library/dateFormat'
 import TimeFormat from '../Library/TimeFormat'
+import { useAppContext } from '../context/appContext'
+import toast from 'react-hot-toast'
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY
+  const { axios, getToken, user } = useAppContext()
+
   const [bookings, setBookings] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const getMyBookings = async () => {
-    setBookings(dummyBookingData)
+  const getBooking = async () => {
+    try {
+      const { data } = await axios.get('/api/user/bookings', {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      })
+
+      if (data.success) {
+        setBookings(data.bookings)
+      } else {
+        toast.error(data.message)
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error('Failed to fetch bookings')
+    }
     setIsLoading(false)
   }
 
   useEffect(() => {
-    getMyBookings()
-  }, [])
+    if (user) {
+      getBooking()
+    }
+  }, [user])
 
-  return !isLoading ? (
+  if (isLoading) return <Loading />
+
+  return (
     <div className="relative px-6 md:px-16 lg:px-40 pt-32 md:pt-40 min-h-[80vh]">
       <BlurCircle top="100px" left="100px" />
-      <div>
-        <BlurCircle bottom="0px" left="600px" />
-      </div>
+      <BlurCircle bottom="0px" left="600px" />
 
       <h1 className="text-lg font-semibold mb-4">My Bookings</h1>
 
-      {bookings.map((item, index) => (
-        <div
-          key={index}
-          className="flex flex-col md:flex-row justify-between
-          bg-primary/8 border border-primary/20 rounded-lg mt-4 p-2 max-w-3xl"
-        >
-          {/* Left side: Poster + Movie info */}
-          <div className="flex gap-4">
-            <img
-              src={item.show.movie.poster_path}
-              alt="Poster"
-              className="w-24 h-36 object-cover rounded-lg"
-            />
+      {bookings.length === 0 && (
+        <p className="text-gray-400 mt-4">You have no bookings yet.</p>
+      )}
 
-            <div className="flex flex-col justify-between text-white text-sm">
-              <p className="text-lg font-semibold">{item.show.movie.title}</p>
-              <p className="text-gray-400 text-sm">
-                {TimeFormat(item.show.movie.runtime)}
-              </p>
-              <p className="text-gray-400 text-sm mt-auto">
-                {dateFormat(item.show.showDateTime)}
-              </p>
+      {bookings.map((item, index) => {
+        const movie = item?.show?.movie
+        const showDateTime = item?.show?.showDateTime
+        // Handle both old and new field names for seats
+        const bookedSeats = item?.bookedSeats || item?.bookedseats || []
+
+        return (
+          <div
+            key={index}
+            className="flex flex-col md:flex-row justify-between bg-primary/8 border border-primary/20 rounded-lg mt-4 p-2 max-w-3xl"
+          >
+            {/* Left side: Poster + Movie info */}
+            <div className="flex gap-4">
+              <img
+                src={movie?.poster_path || '/placeholder.png'}
+                alt={movie?.title || 'Movie Poster'}
+                className="w-24 h-36 object-cover rounded-lg"
+              />
+
+              <div className="flex flex-col justify-between text-white text-sm">
+                <p className="text-lg font-semibold">{movie?.title || 'Unknown Movie'}</p>
+                <p className="text-gray-400 text-sm">
+                  {movie?.runtime ? TimeFormat(movie.runtime) : 'Unknown Runtime'}
+                </p>
+                <p className="text-gray-400 text-sm mt-auto">
+                  {showDateTime ? dateFormat(showDateTime) : 'Unknown Date'}
+                </p>
+              </div>
+            </div>
+
+            {/* Right side: Price + Booking info */}
+            <div className="flex flex-col md:items-end md:text-right justify-between p-4">
+              <div className="flex items-center gap-4">
+                <p className="text-2xl font-semibold mb-3">
+                  {currency}{item?.amount || 0}
+                </p>
+                {!item?.isPaid && (
+                  <button className="px-4 py-1.5 mb-2 text-sm bg-primary hover:bg-primary-dull rounded-full transition font-medium cursor-pointer">
+                    Pay Now
+                  </button>
+                )}
+              </div>
+              <div className="text-sm">
+                <p>
+                  <span className="text-gray-400">Total Tickets :</span>{' '}
+                  {bookedSeats.length}
+                </p>
+                <p>
+                  <span className="text-gray-400">Seat Number :</span>{' '}
+                  {bookedSeats.length > 0 ? bookedSeats.join(', ') : 'N/A'}
+                </p>
+              </div>
             </div>
           </div>
-
-          {/* Right side: Price + Booking info */}
-          <div className="flex flex-col md:items-end md:text-right justify-between p-4">
-  <div className="flex items-center gap-4">
-    <p className="text-2xl font-semibold mb-3">
-      {currency}{item.amount}
-    </p>
-    {!item.isPaid && (
-      <button className="px-4 py-1.5 mb-2 text-sm bg-primary hover:bg-primary-dull rounded-full transition font-medium cursor-pointer">
-        Pay Now
-      </button>
-    )}
-  </div>
-  <div className="text-sm">
-    <p>
-  <span className="text-gray-400">Total Tickets :</span>{' '}
-  {item.bookedSeats.length}
-</p>
-<p>
-  <span className="text-gray-400">Seat Number :</span>{' '}
-  {item.bookedSeats.join(', ')}
-</p>
-  </div>
-</div>
-
-        </div>
-      ))}
+        )
+      })}
     </div>
-  ) : (
-    <Loading />
   )
 }
 

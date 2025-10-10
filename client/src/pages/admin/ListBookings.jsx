@@ -4,17 +4,37 @@ import Loading from '../../components/Loading';
 import BlurCircle from '../../components/BlurCircle';
 import dateFormat from '../../Library/dateFormat';
 import { dummyBookingData } from '../../assets/assets';
+import { useAppContext } from '../../context/appContext';
 
 const ListBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY;
+
+    const { axios, getToken, user } = useAppContext();
+
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
 
+   const getAllBookings = async () => {
+    try {
+      const { data } = await axios.get('/api/admin/all-bookings', {
+        headers: { Authorization: `Bearer ${await getToken()}` },
+      });
+
+      if (data.success) {
+        setBookings(data.bookings || []);
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error('Fetch bookings error:', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Load your local dummy data
-    setBookings(dummyBookingData);
-    setLoading(false);
-  }, []);
+    if (user) getAllBookings();
+  }, [user]);
 
   return !loading ? (
     <div className="w-full md:px-4 max-md:px-0 relative">

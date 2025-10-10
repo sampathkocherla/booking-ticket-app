@@ -5,8 +5,11 @@ import Title from '../../components/admin/Title'
 import BlurCircle from '../../components/BlurCircle'
 import dateFormat from '../../Library/dateFormat'
 import { dummyDashboardData } from '../../assets/assets'
-
+import { useAppContext } from '../../context/AppContext'
+import toast from 'react-hot-toast'
 const Dashboard = () => {
+    const { axios, getToken, user } = useAppContext();
+  
   const currency = import.meta.env.VITE_CURRENCY
   const [dashboardData, setDashboardData] = useState({
     totalBookings: 0,
@@ -40,16 +43,26 @@ const Dashboard = () => {
   ]
 
   const fetchDashboardData = async () => {
-    setDashboardData({
-      ...dummyDashboardData,
-      activeShows: dummyDashboardData?.activeShows || []
-    })
-    setLoading(false)
-  }
+     try{
+      const {data}=await axios.get("/api/admin/dashboard",{headers:{
+        Authorization:`Bearer ${await getToken()}`
+      }})
+      if(data.success){
+        setDashboardData(data.data)
+        setLoading(false)
+      }else{
+        toast.error(data.message)
+      }
+     }catch(error){
+      toast.error("Failed to fetch dashboard data",error)
+     }
+  };
 
   useEffect(() => {
-    fetchDashboardData()
-  }, [])
+     if(user){
+      fetchDashboardData()
+     }
+  }, [user]);
 
   return !loading ? (
     <>
@@ -100,7 +113,7 @@ const Dashboard = () => {
                 </p>
                 <div className="flex justify-between mt-2 px-3 text-white">
                   <p className="text-lg font-medium">
-                    {currency} {show.showPrice}
+                    {currency} {show.showprice}
                   </p>
                   <p className="flex items-center gap-1 text-gray-300 text-sm">
                     <StarIcon className="w-4 h-4 text-primary fill-primary" />

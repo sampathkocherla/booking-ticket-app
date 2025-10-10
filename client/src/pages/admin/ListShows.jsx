@@ -3,18 +3,31 @@ import Title from "../../components/admin/Title";
 import Loading from "../../components/Loading";
 import dateFormat from "../../Library/dateFormat";
 import BlurCircle from "../../components/BlurCircle";
-import { dummyDashboardData } from "../../assets/assets"; // ✅ use activeShows
+import { useAppContext } from "../../context/AppContext";
 
 const Listshow = () => {
+  const { axios, getToken, user } = useAppContext();
   const currency = import.meta.env.VITE_CURRENCY;
   const [shows, setShows] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const getAllShows = async () => {
+    try {
+      const { data } = await axios.get("/api/admin/all-shows", {
+        headers: { Authorization: `Bearer ${await getToken()}` }
+      });
+      setShows(data.shows || []);  // ✅ always an array
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching shows:", error);
+      setShows([]);                // ✅ fallback in case of error
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Load from dummyDashboardData.activeShows
-    setShows(dummyDashboardData.activeShows);
-    setLoading(false);
-  }, []);
+    if (user) getAllShows();        
+  }, [user]);
 
   return !loading ? (
     <div className="w-full md:px-4 max-md:px-0 relative">
@@ -31,26 +44,34 @@ const Listshow = () => {
             </tr>
           </thead>
           <tbody className="text-sm font-light">
-            {shows.map((show, index) => (
-              <tr
-                key={index}
-                className="border-b border-primary/10 bg-primary/5 even:bg-primary/10 whitespace-nowrap"
-              >
-                <td className="p-3 max-w-[180px] truncate">
-                  {show.movie.title}
-                </td>
-                <td className="p-3 max-w-[160px] truncate">
-                  {dateFormat(show.showDateTime).replace("•", " at")}
-                </td>
-                <td className="p-3">
-                  {Object.keys(show.occupiedSeats).length}
-                </td>
-                <td className="p-3">
-                  {currency}{" "}
-                  {Object.keys(show.occupiedSeats).length * show.showPrice}
+            {shows.length > 0 ? (
+              shows.map((show, index) => (
+                <tr
+                  key={index}
+                  className="border-b border-primary/10 bg-primary/5 even:bg-primary/10 whitespace-nowrap"
+                >
+                  <td className="p-3 max-w-[180px] truncate">
+                    {show.movie?.title || "Unknown Movie"}
+                  </td>
+                  <td className="p-3 max-w-[160px] truncate">
+                    {dateFormat(show.showDateTime).replace("•", " at")}
+                  </td>
+                  <td className="p-3">
+                    {Object.keys(show.occupiedSeats || {}).length}
+                  </td>
+                  <td className="p-3">
+                    {currency}{" "}
+                    {(Object.keys(show.occupiedSeats || {}).length * show.showPrice) || 0}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="p-3 text-center text-gray-400">
+                  No shows available
                 </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
