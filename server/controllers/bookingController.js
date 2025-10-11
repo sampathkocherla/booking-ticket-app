@@ -1,6 +1,7 @@
  import Show from "../models/Show.js";
 import Booking from "../models/Booking.js"; // <-- Missing in your code
 import stripe from 'stripe'
+import { inngest } from "../inngest/index.js";
 /**
  * Check if the selected seats are available for a given show
  */
@@ -91,7 +92,13 @@ export const createBooking = async (req, res) => {
     booking.paymentLink=session.url
     await booking.save()
 
-
+//run inngest sheduler function to check payment status after 10 minutes
+    await inngest.send({
+      name:"app/checkpayment",
+      data:{
+        bookingId:booking._id.toString()
+      }
+    })
 
     res.json({ success: true,url:session.url });
   } catch (error) {

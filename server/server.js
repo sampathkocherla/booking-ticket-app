@@ -17,13 +17,24 @@ const port = 3000;
 
 await connectDB();
 
+app.use(cors());
+
 //stripe webhooks route
-app.post('/api/stripe', express.raw({type : "application/json"}), stripeWebhooks);
-
-
+app.post(
+  "/api/stripe",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    try {
+      await stripeWebhooks(req, res);
+    } catch (err) {
+      console.error("Stripe webhook route error:", err.message);
+      res.status(500).end();
+    }
+  }
+);
 // Middlewares
 app.use(express.json());
-app.use(cors());
+ 
 app.use(clerkMiddleware()); // Clerk middleware for authentication
  
 
