@@ -20,9 +20,7 @@ await connectDB();
 
 app.use(cors());
 
-/* ---------------------------------------------
-   ⚡ Stripe Webhooks (must come before express.json)
---------------------------------------------- */
+ 
 app.post(
   "/api/stripe",
   express.raw({ type: "application/json" }), // raw body for signature check
@@ -35,24 +33,16 @@ app.post(
     }
   }
 );
-
-/* ---------------------------------------------
-   🧩 Normal Middlewares (AFTER stripe webhook)
---------------------------------------------- */
 app.use(express.json());
 app.use(clerkMiddleware()); // Clerk auth middleware
 
-/* ---------------------------------------------
-   🚀 API Routes
---------------------------------------------- */
+ 
 app.get('/', (req, res) => res.send("Hello from server"));
 app.use('/api/inngest', serve({ client: inngest, functions }));
 app.use('/api/show', showRouter);
 app.use('/api/bookings', bookingRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/user', userRouter);
+ 
 
-/* ---------------------------------------------
-   🟢 Start Server
---------------------------------------------- */
 app.listen(port, () => console.log(`✅ Server running on port ${port}`));

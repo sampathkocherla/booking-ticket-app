@@ -4,16 +4,16 @@ import Booking from "../models/Booking.js";
 export const stripeWebhooks = async (request, response) => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const sig = request.headers["stripe-signature"];
-  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET; // ✅ matches .env & Vercel env
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;  
 
   let event;
 
   try {
     // Stripe requires the raw body to verify the signature
     event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
-    console.log("✅ Webhook verified:", event.type);
+    console.log("Webhook verified:", event.type);
   } catch (error) {
-    console.error("❌ Webhook signature verification failed:", error.message);
+    console.error("Webhook signature verification failed:", error.message);
     return response.status(400).send(`Webhook Error: ${error.message}`);
   }
 
