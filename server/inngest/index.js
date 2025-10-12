@@ -2,6 +2,7 @@
 import User from "../models/User.js";
 import Show from "../models/Show.js";
 import Booking from "../models/Booking.js";
+import sendEmail from "../configs/nodeMailer.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
@@ -102,7 +103,7 @@ const sendbookingEmail = inngest.createFunction(
 
             await sendEmail({
                 to: booking.user.email,
-                subject: `Payment confirmation: '${booking.show.movie.originalTitle}' booked!`,
+                subject: `Payment confirmation: '${booking.show.movie.title}' booked!`,
                 body: `
         <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           <div style="background-color: #7b2cbf; color: white; padding: 20px; text-align: center;">
@@ -111,22 +112,22 @@ const sendbookingEmail = inngest.createFunction(
 
           <div style="padding: 24px; font-size: 16px; color: #333;">
             <h2 style="margin-top: 0;">Hi ${booking.user.name},</h2>
-            <p>Your booking for <strong style="color: #7b2cbf;">"${booking.show.movie.originalTitle}"</strong> is confirmed.</p>
+            <p>Your booking for <strong style="color: #7b2cbf;">"${booking.show.movie.title}"</strong> is confirmed.</p>
 
             <p>
               <strong>Date:</strong> ${showDate}<br>
               <strong>Time:</strong> ${showTime}
             </p>
             <p><strong>Booking ID:</strong> <span style="color: #7b2cbf;">${booking._id}</span></p>
-            <p><strong>Seats:</strong> ${booking.bookedseats?.join(', ') || 'N/A'}</p>
+            <p><strong>Seats:</strong> ${booking.bookedSeats?.join(', ') || 'N/A'}</p>
 
             <p>🎬 Enjoy the show and don’t forget to grab your popcorn!</p>
           </div>
-          <img src="${booking.show.movie.primaryImage}" alt="${booking.show.movie.originalTitle} Poster" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 4px; margin-top: 16px;" />
+          <img src="${booking.show.movie.poster_path}" alt="${booking.show.movie.title} Poster" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 4px; margin-top: 16px;" />
 
           <div style="background-color: #f5f5f5; color: #777; padding: 16px; text-align: center; font-size: 14px;">
             <p style="margin: 0;">Thanks for booking with us!<br>— The QuickShow Team</p>
-            <p style="margin: 4px 0 0;">📍 Visit us: <a href="https://quickshow-ecru.vercel.app" style="color: #7b2cbf; text-decoration: none;">QuickShow</a></p>
+            <p style="margin: 4px 0 0;">📍 Visit us: <a href="/tobefix" style="color: #7b2cbf; text-decoration: none;">QuickShow</a></p>
           </div>
         </div>`
             });
