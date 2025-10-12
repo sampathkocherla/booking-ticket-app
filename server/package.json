@@ -21,6 +21,7 @@
     "express": "^5.1.0",
     "inngest": "^3.41.0",
     "mongoose": "^8.18.2",
+    "nodemailer": "^7.0.9",
     "stripe": "^19.1.0",
     "svix": "^1.76.1"
   },
