@@ -19,7 +19,7 @@ export const adminDashboarddata = async(req,res) => {
           totalBookings : bookings.length,
           activeshows
         }
-        res.json({success: true, dashboarddata})
+         res.json({ success: true, data: dashboarddata });
       } catch (error) {
         res.json({success: false, message: error.message});
       }

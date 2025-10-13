@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import Show from "../models/Show.js";
 import Booking from "../models/Booking.js";
 import sendEmail from "../configs/nodeMailer.js";
+import Movie from "../models/Movie.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
@@ -60,7 +61,7 @@ const releaseSeatsandDeletebooking = inngest.createFunction(
             const booking = await Booking.findById(bookingId);
             if (!booking.isPaid) {
                 const show = await Show.findById(booking.show);
-                booking.bookedseats.forEach((seat) => {
+                booking.bookedSeats.forEach((seat) => {
                     return delete show.occupiedSeats[seat];
                 })
                 show.markModified('occupiedSeats');
@@ -138,6 +139,55 @@ const sendbookingEmail = inngest.createFunction(
     }
 );
 
+const sendNewMovieEmail = inngest.createFunction(
+    { id: 'send-new-movie-notification' },
+    { event: 'app/show.added' },
+    async ({ event }) => {
+        const { movieId } = event.data;
+        const users = await User.find({});
+        const movie = await Movie.findById(movieId);
+
+        if(!movie) return "No movie found";
+
+        for (const user of users) {
+            const userEmail = user.email;
+            const userName = user.name;
+
+            const subject = `🎬 New Show Added: ${movie.title}`;
+            const body = `<div style="max-width: 600px; margin: auto; font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="background-color: #7b2cbf; color: white; padding: 20px; text-align: center;">
+                <h1 style="margin: 0;">Hi ${userName},</h1>
+            </div>
+
+            <div style="padding: 24px; color: #333;">
+                <h2 style="margin-top: 0;">"${movie.title}" is Now Available on QuickShow!</h2>
+                <p><strong>Release Date:</strong> ${movie.release_date}</p>
+                <p><strong>Genre:</strong> ${movie.genres.map((genre) => genre).join(', ')}</p>
+                <p>${movie.overview}</p>
+
+                <img src="${movie.poster_path}" alt="${movie.title} Poster" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 4px; margin-top: 16px;" />
+
+                <div style="margin-top: 20px; text-align: center;">
+                <a href="/" style="background-color: #7b2cbf; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">🎟️ Book Your Tickets</a>
+                </div>
+            </div>
+
+            <div style="background-color: #f5f5f5; color: #777; padding: 16px; text-align: center; font-size: 14px;">
+                <p style="margin: 0;">Thanks for staying with QuickShow!<br>We bring the cinema to your fingertips.</p>
+                <p style="margin: 4px 0 0;">📍 Visit us: <a href="https://quickshow-ecru.vercel.app" style="color: #7b2cbf; text-decoration: none;">QuickShow</a></p>
+            </div>
+            </div>`
+
+            await sendEmail({
+                to : userEmail,
+                subject,
+                body,
+            })
+        }
+        return {message : 'Notification sent'}
+    }
+)
+
 
 
 // Export all Inngest functions
@@ -145,6 +195,7 @@ export const functions = [syncUserCreation,
    syncUserDeletion, 
    syncUserUpdation,
    releaseSeatsandDeletebooking,
-   sendbookingEmail
+   sendbookingEmail,
+   sendNewMovieEmail
 
 ];
