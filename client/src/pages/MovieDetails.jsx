@@ -6,8 +6,9 @@ import DateSelect from "../components/DateSelect";
 import MovieCard from "../components/MovieCard";
 import Loading from "../components/Loading";
 import toast from "react-hot-toast";
-import { useAppContext } from "../context/AppContext";
+
 import TimeFormat from "../Library/TimeFormat";
+import { useAppContext } from "../context/AppContext";
 
 const MovieDetails = () => {
   const { shows, axios, getToken, user, fetchFavorites, favorites } = useAppContext();

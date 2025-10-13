@@ -3,9 +3,10 @@ import Loading from '../components/Loading'
 import BlurCircle from '../components/BlurCircle'
 import dateFormat from '../Library/dateFormat'
 import TimeFormat from '../Library/TimeFormat'
-import { useAppContext } from '../context/appContext'
+
 import toast from 'react-hot-toast'
 import { Link } from 'react-router-dom'
+import { useAppContext } from '../context/AppContext'
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY

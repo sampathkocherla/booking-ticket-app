@@ -3,8 +3,8 @@ import Title from '../../components/admin/Title';
 import Loading from '../../components/Loading';
 import BlurCircle from '../../components/BlurCircle';
 import dateFormat from '../../Library/dateFormat';
-import { dummyBookingData } from '../../assets/assets';
-import { useAppContext } from '../../context/appContext';
+import { useAppContext } from '../../context/AppContext';
+
 
 const ListBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY;
