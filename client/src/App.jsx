@@ -14,10 +14,11 @@ import Dashboard from './pages/admin/Dashboard'
 import ListBookings from './pages/admin/ListBookings'
 import AddShows from './pages/admin/AddShows'
 import ListShows from './pages/admin/ListShows'
-import { useAppContext } from './context/appContext'
+
 import { SignIn } from '@clerk/clerk-react'
  import NavBar from './components/NavBar'
 import Loading from './components/Loading'
+import { useAppContext } from './context/AppContext'
 
 const App = () => {
   const isAdminRoute=useLocation().pathname.startsWith("/admin")
