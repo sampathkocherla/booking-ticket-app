@@ -39,7 +39,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Fetch shows
+  // ✅ Fetch all shows
   const fetchShows = async () => {
     try {
       const { data } = await axios.get("/api/show/all");
@@ -50,7 +50,7 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Fetch user favorites
+  // ✅ Fetch user favorites
   const fetchFavorites = async () => {
     try {
       if (!user || !authLoaded) return;
@@ -58,8 +58,9 @@ export const AppProvider = ({ children }) => {
       const { data } = await axios.get("/api/user/favorites", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (data.success) setFavorites(data.movies);
-    } catch {
+      if (data.success) setFavorites(data.movies || []);
+    } catch (error) {
+      console.error("Failed to load favorites:", error);
       toast.error("Failed to load favorites");
     }
   };
@@ -71,7 +72,16 @@ export const AppProvider = ({ children }) => {
     }
   }, [location.pathname, userLoaded, authLoaded, user]);
 
-  // Fetch shows once
+  // ✅ Fetch favorites when user or auth is ready
+  useEffect(() => {
+    if (userLoaded && authLoaded && user) {
+      fetchFavorites();
+    } else {
+      setFavorites([]); // clear when logged out
+    }
+  }, [userLoaded, authLoaded, user]);
+
+  // ✅ Fetch shows once
   useEffect(() => {
     fetchShows();
   }, []);

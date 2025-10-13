@@ -1,44 +1,16 @@
- import React, { useState, useEffect } from "react";
+ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react";
 import { assets } from "../assets/assets";
-import { useClerk, useUser, UserButton, useAuth } from "@clerk/clerk-react";
+import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 import { useAppContext } from "../context/appContext";
-import axios from "axios";
 
 const NavBar = () => {
-  const { favorites, setFavorites } = useAppContext();
+  const { favorites } = useAppContext();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, isLoaded } = useUser();
-  const { getToken } = useAuth(); // ✅ for auth header
   const { openSignIn } = useClerk();
   const navigate = useNavigate();
-
-  // 🔗 Base API URL (set in .env)
-  const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      if (user) {
-        try {
-          const token = await getToken(); // ✅ Get Clerk token
-          const res = await axios.get(`${API_BASE}/api/user/favorites`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setFavorites(res.data || []);
-        } catch (error) {
-          console.error("❌ Failed to fetch favorites:", error);
-          setFavorites([]);
-        }
-      } else {
-        setFavorites([]);
-      }
-    };
-
-    fetchFavorites();
-  }, [user, setFavorites, getToken]);
 
   if (!isLoaded) {
     return (
@@ -76,14 +48,15 @@ const NavBar = () => {
 
         <Link onClick={() => { scrollTo(0, 0); setIsMenuOpen(false); }} to="/">Home</Link>
         <Link onClick={() => { scrollTo(0, 0); setIsMenuOpen(false); }} to="/movies">Movies</Link>
-        <Link onClick={() => { scrollTo(0, 0); setIsMenuOpen(false); }} to="/theaters">Theaters</Link>
-        <Link onClick={() => { scrollTo(0, 0); setIsMenuOpen(false); }} to="/">Releases</Link>
+        <Link onClick={() => { scrollTo(0, 0); setIsMenuOpen(false); }} to="/">Theaters</Link>
+         
+        {/* Favorites Link (visible only if there are favorites) */}
         {favorites?.length > 0 && (
           <Link
             onClick={() => { scrollTo(0, 0); setIsMenuOpen(false); }}
             to="/favorite"
           >
-            Favorites ({favorites.length})
+            Favorites  
           </Link>
         )}
       </div>
