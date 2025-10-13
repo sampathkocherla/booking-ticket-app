@@ -2,7 +2,8 @@
 import { dummyShowsData } from '../assets/assets'
 import MovieCard from '../components/MovieCard'
 import BlurCircle from '../components/BlurCircle'
- import {useAppContext} from '../context/appContext';
+import { useAppContext } from '../context/AppContext'
+ 
 
 
 const Movies = () => {
