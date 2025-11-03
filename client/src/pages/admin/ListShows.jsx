@@ -16,7 +16,7 @@ const Listshow = () => {
       const { data } = await axios.get("/api/admin/all-shows", {
         headers: { Authorization: `Bearer ${await getToken()}` }
       });
-      setShows(data.shows || []);  // ✅ always an array
+       setShows(data.showdata || []);  // ✅ always an array
       setLoading(false);
     } catch (error) {
       console.error("Error fetching shows:", error);
