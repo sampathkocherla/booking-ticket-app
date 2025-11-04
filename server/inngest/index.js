@@ -155,7 +155,7 @@ const sendNewMovieEmail = inngest.createFunction(
 
             const subject = `🎬 New Show Added: ${movie.title}`;
             const body = `<div style="max-width: 600px; margin: auto; font-family: Arial, sans-serif; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-            <div style="background-color: #7b2cbf; color: white; padding: 20px; text-align: center;">
+            <div style="background-color: #bf2c4cff; color: white; padding: 20px; text-align: center;">
                 <h1 style="margin: 0;">Hi ${userName},</h1>
             </div>
 
@@ -168,13 +168,13 @@ const sendNewMovieEmail = inngest.createFunction(
                 <img src="${movie.poster_path}" alt="${movie.title} Poster" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 4px; margin-top: 16px;" />
 
                 <div style="margin-top: 20px; text-align: center;">
-                <a href="/" style="background-color: #7b2cbf; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">🎟️ Book Your Tickets</a>
+                <a href="/" style="background-color: #bf2c40ff; color: white; padding: 12px 20px; text-decoration: none; border-radius: 6px; font-weight: bold;">🎟️ Book Your Tickets</a>
                 </div>
             </div>
 
             <div style="background-color: #f5f5f5; color: #777; padding: 16px; text-align: center; font-size: 14px;">
                 <p style="margin: 0;">Thanks for staying with QuickShow!<br>We bring the cinema to your fingertips.</p>
-                <p style="margin: 4px 0 0;">📍 Visit us: <a href="https://quickshow-ecru.vercel.app" style="color: #7b2cbf; text-decoration: none;">QuickShow</a></p>
+                <p style="margin: 4px 0 0;">📍 Visit us: <a href="booking-ticket-app-omega.vercel.app" style="color: #bf2c4cff; text-decoration: none;">QuickShow</a></p>
             </div>
             </div>`
 
