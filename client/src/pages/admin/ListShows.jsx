@@ -61,7 +61,7 @@ const Listshow = () => {
                   </td>
                   <td className="p-3">
                     {currency}{" "}
-                    {(Object.keys(show.occupiedSeats || {}).length * show.showPrice) || 0}
+                    {(Object.keys(show.occupiedSeats || {}).length * show.showprice) || 0}
                   </td>
                 </tr>
               ))

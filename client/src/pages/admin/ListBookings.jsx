@@ -57,7 +57,7 @@ const ListBookings = () => {
               const show = booking?.show || {};   // ✅ show object
               const movie = show?.movie || {};    // ✅ movie inside show
               const showTime = show?. showDateTime || ''; // ✅ datetime in assets
-              const price = show?. showPrice || 0;
+              const price = show?.  showprice || 0;
               const userName = booking?.user?.name || 'N/A'; // ✅ fixed
 
               return (
