@@ -25,7 +25,7 @@ const checkSeatsAvailability = async (showId, selectedSeats) => {
  */
 export const createBooking = async (req, res) => {
   try {
-    const userId = req.auth?.userId;              // <-- safer than destructuring
+    const userId = req.auth?.userId;              
     const { showId, selectedSeats } = req.body;
     const{origin}=req.headers;
 
@@ -64,7 +64,7 @@ export const createBooking = async (req, res) => {
     showData.markModified("occupiedSeats");
     await showData.save();
 
-    // TODO: integrate Stripe gateway if needed
+    //  integrated Stripe gateway 
     const stripeInstance=new stripe(process.env.STRIPE_SECRET_KEY)
 
    //CREATING LINE ITEMS

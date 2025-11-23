@@ -3,9 +3,7 @@ import Booking from "../models/Booking.js";
 import Movie from "../models/Movie.js";
 
 /**
- * ================================
- *  Get User Bookings
- * ================================
+    Get User Bookings
  */
 export const getUserBookings = async (req, res) => {
   try {
@@ -29,9 +27,7 @@ export const getUserBookings = async (req, res) => {
 };
 
 /**
- * ================================
- *  Update Favorite Movies
- * ================================
+ Update Favorite Movies
  */
 export const updateFavoriteMovie = async (req, res) => {
   try {
@@ -73,9 +69,7 @@ export const updateFavoriteMovie = async (req, res) => {
 };
 
 /**
- * ================================
  *  Get Favorite Movies
- * ================================
  */
 export const getFavoriteMovies = async (req, res) => {
   try {
