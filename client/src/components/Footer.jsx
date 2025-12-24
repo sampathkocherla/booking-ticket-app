@@ -7,7 +7,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-10 border-b border-white py-10">
           
           <div className='flex flex-col gap-4 max-w-md'>
-            <img src="./src/assets/logo.svg" alt="Logo" className='w-32 sm:w-40' />
+            <img src={assets.logo} alt="Logo" className='w-32 sm:w-40' />
             <p className="text-gray-300 sm:text-sm">
               Book movie tickets online with ease, explore upcoming releases, and catch the latest trailers.
             </p>
